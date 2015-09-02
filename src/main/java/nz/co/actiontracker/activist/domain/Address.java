@@ -1,5 +1,7 @@
 package nz.co.actiontracker.activist.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -12,21 +14,27 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@Embeddable
 public class Address {
 	
 	@XmlElement(name="street_number")
+	@Column(nullable=false, name="STREET_NO")
 	private String _streetNumber;
 	
 	@XmlElement(name="street_name")
+	@Column(nullable=false, name="STREET")
 	private String _streetName;
 	
 	@XmlElement(name="suburb")
+	@Column(nullable=false, name="SUBURB")
 	private String _suburb;
 	
 	@XmlElement(name="city")
+	@Column(nullable=false, name="CITY")
 	private String _city;
 	
 	@XmlElement(name="zip_code")
+	@Column(nullable=false, name="ZIP_CODE")
 	private String _zipCode;
 	
 	protected Address() {
