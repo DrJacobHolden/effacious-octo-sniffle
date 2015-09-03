@@ -39,7 +39,7 @@ public abstract class JpaTest {
 	public static void initialiseDatabase() throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
 		_jdbcConnection = DriverManager.getConnection(
-				"jdbc:h2:~test;mv_store=false","sa", "sa");
+				"jdbc:h2:~/test;mv_store=false","sa", "sa");
 		clearDatabase(true);
 		_factory = Persistence.createEntityManagerFactory("scratchPU");
 	}
@@ -62,7 +62,7 @@ public abstract class JpaTest {
 	
 	protected static void clearDatabase(boolean dropTables) throws SQLException {
 		Statement s = _jdbcConnection.createStatement();
-		s.execute("SET REFERENTIAL_IINTEGRITY FALSE");
+		s.execute("SET REFERENTIAL_INTEGRITY FALSE");
 		
 		Set<String> tables = new HashSet<String>();
 		ResultSet rs = s.executeQuery("select table_name "

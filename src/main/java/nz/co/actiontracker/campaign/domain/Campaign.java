@@ -9,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -31,9 +30,17 @@ import nz.co.actiontracker.campaign.knowledgebase.domain.KnowledgeBase;
 public class Campaign {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(generator="ID_GENERATOR")
 	private long _id;
 
+	@Column(unique=true)
+	private String _name;
+	
+	public Campaign(String name) {
+		_name = name;
+		KB = new KnowledgeBase(this);
+	}
+	
 	protected Campaign() {}
 	
 	@ElementCollection
@@ -44,5 +51,13 @@ public class Campaign {
 	protected Set<Event> events = new HashSet<Event>();
 	
 	protected KnowledgeBase KB;
+	
+	public String getName() {
+		return _name;
+	}
+	
+	public long getId() {
+		return _id;
+	}
 	
 }

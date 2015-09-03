@@ -10,6 +10,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import nz.co.actiontracker.campaign.domain.Campaign;
 import nz.co.actiontracker.campaign.knowledgebase.articles.domain.Article;
 
 /**
@@ -29,7 +30,7 @@ import nz.co.actiontracker.campaign.knowledgebase.articles.domain.Article;
 @XmlRootElement
 public class KnowledgeBase {
 
-	protected KnowledgeBase() {}
+	public KnowledgeBase(Campaign owner) {}
 	
 	@ElementCollection
 	@CollectionTable(name="ARTICLE")
