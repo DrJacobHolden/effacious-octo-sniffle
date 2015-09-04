@@ -1,4 +1,4 @@
-package nz.co.actiontracker.activist.domain;
+package nz.co.actiontracker.domain;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package nz.co.actiontracker.campaign.knowledgebase.domain;
+package nz.co.actiontracker.domain;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,10 +8,10 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import nz.co.actiontracker.campaign.domain.Campaign;
-import nz.co.actiontracker.campaign.knowledgebase.articles.domain.Article;
 
 /**
  * 
@@ -26,11 +26,17 @@ import nz.co.actiontracker.campaign.knowledgebase.articles.domain.Article;
  * @author trob525
  *
  */
-@Embeddable
+@Entity
 @XmlRootElement
 public class KnowledgeBase {
 
+	@Id
+	@GeneratedValue(generator="ID_GENERATOR")
+	private long _id;
+	
 	public KnowledgeBase(Campaign owner) {}
+	
+	protected KnowledgeBase() {}
 	
 	@ElementCollection
 	@CollectionTable(name="ARTICLE")

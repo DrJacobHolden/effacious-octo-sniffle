@@ -1,4 +1,4 @@
-package nz.co.actiontracker.campaign.knowledgebase.articles.domain;
+package nz.co.actiontracker.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

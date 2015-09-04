@@ -1,4 +1,4 @@
-package nz.co.actiontracker.campaign.event.domain;
+package nz.co.actiontracker.domain;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -7,6 +7,10 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,17 +25,22 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * An event has a name, a date and a list of attendees.
  *
  */
-@Embeddable
+@Entity
+@Table(name="EVENTS")
 @XmlRootElement
 public class Event {
 	
 	protected Event() {}
 	
-	@Column(nullable=false)
+	@Id
+	@GeneratedValue(generator="ID_GENERATOR")
+	private long _id;
+	
+	@Column(name="EVENT_NAME", nullable=false)
 	private String _name;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(nullable=false)
+	@Column(name="EVENT_DATE", nullable=false)
 	private Date _eventTime;
 	
 	//Only store attendees' unique ids as we will never

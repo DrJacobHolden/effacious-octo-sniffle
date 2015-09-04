@@ -1,19 +1,22 @@
-package nz.co.actiontracker.campaign.domain;
+package nz.co.actiontracker.domain;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import nz.co.actiontracker.campaign.event.domain.Event;
-import nz.co.actiontracker.campaign.knowledgebase.domain.KnowledgeBase;
 
 /**
  * 
@@ -26,6 +29,7 @@ import nz.co.actiontracker.campaign.knowledgebase.domain.KnowledgeBase;
  *
  */
 @Entity
+@Table(name="CAMPAIGNS")
 @XmlRootElement
 public class Campaign {
 
@@ -33,24 +37,22 @@ public class Campaign {
 	@GeneratedValue(generator="ID_GENERATOR")
 	private long _id;
 
-	@Column(unique=true)
+	@Column(unique=true, name="NAME", nullable=false)
 	private String _name;
 	
 	public Campaign(String name) {
 		_name = name;
-		KB = new KnowledgeBase(this);
 	}
 	
 	protected Campaign() {}
 	
-	@ElementCollection
-	@CollectionTable(name="EVENTS")
-	@AttributeOverride(
-			name="_name",
-			column = @Column(name="EVENT_NAME",nullable=false))
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@JoinColumn(name="_id")
 	protected Set<Event> events = new HashSet<Event>();
 	
-	protected KnowledgeBase KB;
+	@OneToOne
+	@JoinColumn(name="_id")
+	protected KnowledgeBase KB = new KnowledgeBase(this);
 	
 	public String getName() {
 		return _name;

@@ -1,4 +1,4 @@
-package nz.co.actiontracker.activist.domain;
+package nz.co.actiontracker.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,15 +35,14 @@ public class Activist {
 	@Column(name="AGE")
 	private int _age;
 	
-	//
-	//private Address _address;
+	private Address _address;
 	
 	public Activist(String username, String email, Gender gender, int age, Address address) {
 		this._username = username;
 		this._email = email;
 		this._gender = gender;
 		this._age = age;
-		//this._address = address;
+		this._address = address;
 	}
 	
 	//TODO: Create other constructors

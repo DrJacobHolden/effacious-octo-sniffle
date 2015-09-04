@@ -1,11 +1,12 @@
 package nz.co.actiontracker.domain;
 
+import static org.junit.Assert.fail;
+
+import java.util.List;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import nz.co.actiontracker.activist.domain.Activist;
-import nz.co.actiontracker.campaign.domain.Campaign;
 
 /**
  * Test class to illustrate the behaviour of JPA in generating relational 
@@ -37,10 +38,18 @@ public class DomainTest extends JpaTest {
 		_logger.info("The activist has been created.");
 		
 		_entityManager.persist(john);
+		
+		//Checks the activist was actually added to the table
+		List<Activist> activists = _entityManager.createQuery("select activist from Activist activist").getResultList();
+		if(activists.isEmpty())
+			fail("There should be an activist.");
+		for(Activist activist : activists) {
+			_logger.info("Retrieved Activist: " + activist.getUsername());
+		}
 
 		_entityManager.getTransaction().commit();
 	}
-	
+	/*
 	@Test
 	public void persistCampaign() {
 		_entityManager.getTransaction().begin();

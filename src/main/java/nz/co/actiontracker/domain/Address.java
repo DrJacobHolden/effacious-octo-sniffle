@@ -1,4 +1,4 @@
-package nz.co.actiontracker.activist.domain;
+package nz.co.actiontracker.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -18,23 +18,23 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class Address {
 	
 	@XmlElement(name="street_number")
-	@Column(nullable=false, name="STREET_NO")
+	@Column(name="STREET_NO")
 	private String _streetNumber;
 	
 	@XmlElement(name="street_name")
-	@Column(nullable=false, name="STREET")
+	@Column(name="STREET")
 	private String _streetName;
 	
 	@XmlElement(name="suburb")
-	@Column(nullable=false, name="SUBURB")
+	@Column(name="SUBURB")
 	private String _suburb;
 	
 	@XmlElement(name="city")
-	@Column(nullable=false, name="CITY")
+	@Column(name="CITY")
 	private String _city;
 	
 	@XmlElement(name="zip_code")
-	@Column(nullable=false, name="ZIP_CODE")
+	@Column(name="ZIP_CODE")
 	private String _zipCode;
 	
 	protected Address() {
