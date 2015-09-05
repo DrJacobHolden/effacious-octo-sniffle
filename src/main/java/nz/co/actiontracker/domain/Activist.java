@@ -75,13 +75,34 @@ public class Activist {
 	}
 
 	/**
+	 * Makes this activist the owner of an event
+	 * 
+	 * This method does not create the event object,
+	 * instead it expects to be passed the event object
+	 * and the campaign object it is related to.
+	 * 
+	 * Returns false if the event already exists within the campaign.
+	 */
+	public boolean createEvent(Campaign campaign, Event e) {
+		if(campaign.addEvent(e)) {
+			_createdEvents.add(e);
+			e.setCreator(this);
+			return true;
+		} else {
+			_logger.error("Unable to add event " + e.toString()
+					+ " it is already part of campaign " + campaign.toString());
+			return false;
+		}
+	}
+	
+	/**
 	 * Makes this activist the owner of a campaign.
 	 * 
 	 * This method does not create the campaign object,
 	 * instead it expects to be passed the campaign object.
 	 */
 	public void createCampaign(Campaign campaign) {
-		created.add(campaign);
+		_createdCampaigns.add(campaign);
 		campaign.setCreator(this);
 	}
 
@@ -123,11 +144,24 @@ public class Activist {
 			targetEntity=Campaign.class
 			)
 	@JoinTable(
-			name="CREATOR_TABLE",
+			name="CAMPAIGN_CREATOR_TABLE",
 			joinColumns=@JoinColumn(name="ACTIVIST_ID"),
 			inverseJoinColumns=@JoinColumn(name="CAMPAIGN_ID")
 			)
-	private Set<Campaign> created = new HashSet<Campaign>();
+	private Set<Campaign> _createdCampaigns = new HashSet<Campaign>();
+	
+	/**
+	 * The events this activist has created.
+	 */
+	@OneToMany(
+			targetEntity=Event.class
+			)
+	@JoinTable(
+			name="EVENT_CREATOR_TABLE",
+			joinColumns=@JoinColumn(name="ACTIVIST_ID"),
+			inverseJoinColumns=@JoinColumn(name="EVENT_ID")
+			)
+	private Set<Event> _createdEvents = new HashSet<Event>();
 
 	/**
 	 * The set of campaigns an activist is subscribed to.

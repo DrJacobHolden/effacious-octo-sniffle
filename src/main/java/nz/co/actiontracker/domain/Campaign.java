@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -66,6 +65,20 @@ public class Campaign {
 		}
 	}
 	
+	/**
+	 * Adds this event to this campaign.
+	 * 
+	 * Return false if the event is already part of this campaign.
+	 */
+	protected boolean addEvent(Event e) {
+		if(events.contains(e)) {
+			return false;
+		} else {
+			events.add(e);
+			return true;
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return _name;
@@ -108,8 +121,7 @@ public class Campaign {
 	 * a campaign can be associated with many events.
 	 */
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-	@JoinColumn(name="_id")
-	protected Set<Event> events = new HashSet<Event>();
+	private Set<Event> events = new HashSet<Event>();
 
 	/**
 	 * The Knowledge Base for this campaign.
@@ -119,7 +131,7 @@ public class Campaign {
 	 */
 	@OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-	protected KnowledgeBase _KB;
+	private KnowledgeBase _KB;
 	
 	/**
 	 * The activists who are subscribed to this campaign.

@@ -6,10 +6,10 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,24 +30,14 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @XmlRootElement
 public class Event {
 	
-	protected Event() {}
+	/*
+	 * Methods/Functions
+	 */
 	
-	@Id
-	@GeneratedValue(generator="ID_GENERATOR")
-	private long _id;
-	
-	@Column(name="EVENT_NAME", nullable=false)
-	private String _name;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name="EVENT_DATE", nullable=false)
-	private Date _eventTime;
-	
-	//Only store attendees' unique ids as we will never
-	//need to perform any action on an attendee
-	@ElementCollection
-	@Column(name="AttendeeID")
-	protected Set<Long> attendees = new HashSet<Long>();
+	@Override
+	public String toString() {
+		return _name;
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -59,7 +49,9 @@ public class Event {
 		Event a = (Event) obj;
 		return new EqualsBuilder().
 				append(_name, a._name).
-				append(_eventTime, a._eventTime).
+				append(_eventDate, a._eventDate).
+				append(_creator, a._creator).
+				append(_location, a._location).
 				isEquals();
 	}
 	
@@ -67,8 +59,75 @@ public class Event {
 	public int hashCode() {
 		return new HashCodeBuilder(17,31).
 				append(_name).
-				append(_eventTime).
+				append(_eventDate).
+				append(_creator).
+				append(_location).
 				toHashCode();
 	}
 	
+	/*
+	 * Fields
+	 */
+	
+	@Id
+	@GeneratedValue(generator="ID_GENERATOR")
+	private long _id;
+	
+	/**
+	 * The name of the event
+	 */
+	@Column(name="EVENT_NAME", nullable=false)
+	private String _name;
+	
+	/**
+	 * The date of the event
+	 */
+	@Temporal(TemporalType.DATE)
+	@Column(name="EVENT_DATE", nullable=false)
+	private Date _eventDate;
+	
+	/**
+	 * The location of the event, stored as a string to
+	 * increase flexibility.
+	 */
+	@Column(name="EVENT_LOCATION", nullable=false)
+	private String _location;
+	
+	/**
+	 * The creator of this event.
+	 * 
+	 * An activist can create many events, but an event
+	 * can only have one creator.
+	 */
+	@ManyToOne(
+			targetEntity = Activist.class
+			)
+	private Activist _creator;
+	
+	/**
+	 * The IDs of the attending activists
+	 */
+	@ElementCollection
+	@Column(name="AttendeeID")
+	private Set<Long> attendees = new HashSet<Long>();
+	
+	/*
+	 * Constructors
+	 */
+	
+	public Event(String name, Date date, String loc) {
+		_name = name;
+		_eventDate = date;
+		_location = loc;
+	}
+	
+	protected Event() {}
+	
+	/*
+	 * Getters and setters
+	 */
+	
+	protected void setCreator(Activist a) {
+		_creator = a;
+	}
 }
