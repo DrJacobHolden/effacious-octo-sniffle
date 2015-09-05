@@ -51,6 +51,7 @@ public class Event {
 				append(_name, a._name).
 				append(_eventDate, a._eventDate).
 				append(_creator, a._creator).
+				append(_campaign, a._campaign).
 				append(_location, a._location).
 				isEquals();
 	}
@@ -62,6 +63,7 @@ public class Event {
 				append(_eventDate).
 				append(_creator).
 				append(_location).
+				append(_campaign).
 				toHashCode();
 	}
 	
@@ -103,6 +105,17 @@ public class Event {
 			targetEntity = Activist.class
 			)
 	private Activist _creator;
+
+	/**
+	 * The campaign this event belongs to.
+	 * 
+	 * A campaign can have many events, but an event
+	 * can only belong to one campaign.
+	 */
+	@ManyToOne(
+			targetEntity = Campaign.class
+			)
+	private Campaign _campaign;
 	
 	/**
 	 * The IDs of the attending activists
@@ -127,7 +140,19 @@ public class Event {
 	 * Getters and setters
 	 */
 	
+	public Activist getCreator() {
+		return _creator;
+	}
+	
+	public Campaign getCampaign() {
+		return _campaign;
+	}
+	
 	protected void setCreator(Activist a) {
 		_creator = a;
+	}
+
+	protected void setCampaign(Campaign c) {
+		_campaign = c;
 	}
 }

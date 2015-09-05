@@ -7,9 +7,10 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -43,8 +44,8 @@ public class Campaign {
 	 * Returns false if the activist is already subscribed to the campaign.
 	 */
 	protected boolean addSubscriber(Activist sub) {
-		if (!subscribers.contains(sub)) {
-			subscribers.add(sub);
+		if (!_subscribers.contains(sub)) {
+			_subscribers.add(sub);
 			return true;
 		} else {
 			return false;
@@ -57,8 +58,8 @@ public class Campaign {
 	 * Returns false if the activist is not already subscribed to this campaign.
 	 */
 	protected boolean removeSubscriber(Activist sub) {
-		if (subscribers.contains(sub)) {
-			subscribers.remove(sub);
+		if (_subscribers.contains(sub)) {
+			_subscribers.remove(sub);
 			return true;
 		} else {
 			return false;
@@ -71,10 +72,11 @@ public class Campaign {
 	 * Return false if the event is already part of this campaign.
 	 */
 	protected boolean addEvent(Event e) {
-		if(events.contains(e)) {
+		if(_events.contains(e)) {
 			return false;
 		} else {
-			events.add(e);
+			e.setCampaign(this);
+			_events.add(e);
 			return true;
 		}
 	}
@@ -113,15 +115,6 @@ public class Campaign {
 			targetEntity = Activist.class
 			)
 	private Activist _creator;
-	
-	/**
-	 * The set of events associated with this campaign.
-	 * 
-	 * An event can only be associated with one campaign, but
-	 * a campaign can be associated with many events.
-	 */
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-	private Set<Event> events = new HashSet<Event>();
 
 	/**
 	 * The Knowledge Base for this campaign.
@@ -144,7 +137,23 @@ public class Campaign {
 			mappedBy = "_subscribed",
 			targetEntity = Activist.class
 			)
-	protected Set<Activist> subscribers = new HashSet<Activist>();
+	protected Set<Activist> _subscribers = new HashSet<Activist>();
+	
+	/**
+	 * The set of events associated with this campaign.
+	 * 
+	 * An event can only be associated with one campaign, but
+	 * a campaign can be associated with many events.
+	 */
+	@OneToMany(
+			targetEntity=Event.class
+			)
+	@JoinTable(
+			name="EVENT_CAMPAIGN_TABLE",
+			joinColumns=@JoinColumn(name="CAMPAIGN_ID"),
+			inverseJoinColumns=@JoinColumn(name="EVENT_ID")
+			)
+	private Set<Event> _events = new HashSet<Event>();
 	
 	/*
 	 * Constructors
@@ -162,7 +171,7 @@ public class Campaign {
 	 */
 	
 	public Collection<Activist> getSubscribers() {
-		return subscribers;
+		return _subscribers;
 	}
 	
 	public String getName() {

@@ -187,19 +187,10 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 		
-		Campaign camp = setupCampaign();
-		Activist creator = camp.getCreator();
+		Event e = setupEvent();
 		
-		Event e = new Event("Sit-In at the Rest Home", new Date(), "The Rest Home");
-		
-		_logger.info("The event " + e.toString() + " has been created.");
-		
-		assertTrue(creator.createEvent(camp, e));
-		
-		_logger.info("The event " + e.toString() + " has been added to " + camp.toString() + ".");
-	
-		_entityManager.persist(creator);
-		_entityManager.persist(camp);
+		_entityManager.persist(e.getCreator());
+		_entityManager.persist(e.getCampaign());
 		_entityManager.persist(e);
 		
 		_entityManager.getTransaction().commit();
@@ -224,5 +215,21 @@ public class DomainTest extends JpaTest {
 
 		_logger.info("The campaign " + camp.getName() + " has been created by " + camp.getCreator().toString() + ".");
 		return camp;
+	}
+
+	/**
+	 * Helper function that sets up an event.
+	 * 
+	 * This returns the event.
+	 */
+	public Event setupEvent() {
+		Campaign camp = setupCampaign();
+		Activist creator = camp.getCreator();
+		Event e = new Event("Sit-In at the Rest Home", new Date(), "The Rest Home");
+		
+		assertTrue(creator.createEvent(camp, e));
+		
+		_logger.info("The event " + e.toString() + " has been created.");
+		return e;
 	}
 }
