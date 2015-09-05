@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +76,36 @@ public class Activist {
 	}
 
 	/**
+	 * RSVP to an event.
+	 * 
+	 * Returns false if you are already rsvped.
+	 */
+	public boolean RSVPEvent(Event e) {
+		if(!_rsvped.contains(e) && e.rsvp(this)) {
+			_rsvped.add(e);
+			return true;
+		} else {
+			_logger.warn(this.toString() + "is already rsvped to " + e.toString());
+			return false;
+		}
+	}
+	
+	/**
+	 * unRSVP to an event.
+	 * 
+	 * Returns false if you are not rsvped.
+	 */
+	public boolean unRSVPEvent(Event e) {
+		if(_rsvped.contains(e) && e.unrsvp(this)) {
+			_rsvped.remove(e);
+			return true;
+		} else {
+			_logger.warn(this.toString() + "is not rsvped to " + e.toString());
+			return false;
+		}
+	}
+	
+	/**
 	 * Makes this activist the owner of an event
 	 * 
 	 * This method does not create the event object,
@@ -94,6 +125,33 @@ public class Activist {
 			return false;
 		}
 	}
+
+	/**
+	 * Cancel an event.
+	 * 
+	 * Specifically, this method removes this activist as the owner,
+	 * and disassociates the event from the specified campaign. This
+	 * can only be called by the creator of the event.
+	 */
+	public boolean cancelEvent(Campaign campaign, Event e) {
+		
+		if (e.getCreator().getId() != this.getId()) {
+			_logger.error("Unable to remove event " + e.toString()
+			+ " as " + this.toString() + " is not the owner.");
+			return false;
+		}
+		
+		if(_createdEvents.contains(e) && campaign.removeEvent(e)) {
+			_createdEvents.remove(e);
+			e.setCreator(null);
+			e.setCampaign(null);
+			return true;
+		} else {
+			_logger.error("Unable to remove event " + e.toString()
+					+ " it is not part of campaign " + campaign.toString());
+			return false;
+		}
+	}
 	
 	/**
 	 * Makes this activist the owner of a campaign.
@@ -110,7 +168,7 @@ public class Activist {
 	public String toString() {
 		return _username;
 	}
-
+	
 	/*
 	 * Fields
 	 */
@@ -177,6 +235,20 @@ public class Activist {
 			)
 	private Set<Campaign> _subscribed = new HashSet<Campaign>();
 
+	/**
+	 * The set of events an activist is RSVPed to.
+	 */
+	@ManyToMany(
+			targetEntity=Event.class,
+			cascade={CascadeType.PERSIST, CascadeType.MERGE}
+			)
+	@JoinTable(
+			name="RSVP_TABLE",
+			joinColumns=@JoinColumn(name="ACTIVIST_ID"),
+			inverseJoinColumns=@JoinColumn(name="EVENT_ID")
+			)
+	private Set<Event> _rsvped = new HashSet<Event>();
+	
 	/*
 	 * Constructors
 	 */

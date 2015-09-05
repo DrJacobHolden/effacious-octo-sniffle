@@ -198,6 +198,90 @@ public class DomainTest extends JpaTest {
 		_logger.info("Finishing createEvent test.");
 	}
 	
+	/**
+	 * Tests removing an event.
+	 */
+	@Test
+	public void removeEvent() {
+		_logger.info("Beginning removeEvent test.");
+
+		_entityManager.getTransaction().begin();
+		
+		Event e = setupEvent();
+		
+		Activist creator = e.getCreator();
+		Campaign campaign = e.getCampaign();
+		
+		assertTrue(creator.cancelEvent(campaign, e));
+		
+		_logger.info("Successfully cancelled the event " + e.toString() + ".");
+		
+		_entityManager.persist(creator);
+		_entityManager.persist(campaign);
+		_entityManager.persist(e);
+		
+		_entityManager.getTransaction().commit();
+
+		_logger.info("Finishing removeEvent test.");
+	}
+	
+	/**
+	 * Tests RSVPing to an event
+	 */
+	@Test
+	public void RSVPEvent() {
+		_logger.info("Beginning RSVPEvent test.");
+
+		_entityManager.getTransaction().begin();
+		
+		Event e = setupEvent();
+		
+		Activist jim = new Activist("JSterling", "j.sterling@youtube.com");
+		
+		assertTrue(jim.RSVPEvent(e));
+		
+		_logger.info(jim.toString() + " has RSVPed to " + e.toString());
+		
+		_entityManager.persist(e.getCreator());
+		_entityManager.persist(jim);
+		_entityManager.persist(e.getCampaign());
+		_entityManager.persist(e);
+		
+		_entityManager.getTransaction().commit();
+
+		_logger.info("Finishing RSVPEvent test.");
+	}
+	
+	/**
+	 * Tests ,unRSVPing to an event
+	 */
+	@Test
+	public void unRSVPEvent() {
+		_logger.info("Beginning unRSVPEvent test.");
+
+		_entityManager.getTransaction().begin();
+		
+		Event e = setupEvent();
+		
+		Activist jim = new Activist("JSterling", "j.sterling@youtube.com");
+		
+		assertTrue(jim.RSVPEvent(e));
+		
+		_logger.info(jim.toString() + " has RSVPed to " + e.toString());
+		
+		assertTrue(jim.unRSVPEvent(e));
+		
+		_logger.info(jim.toString() + " has unRSVPed to " + e.toString());
+		
+		_entityManager.persist(e.getCreator());
+		_entityManager.persist(jim);
+		_entityManager.persist(e.getCampaign());
+		_entityManager.persist(e);
+		
+		_entityManager.getTransaction().commit();
+
+		_logger.info("Finishing unRSVPEvent test.");
+	}
 	/*
 	 * Helper functions
 	 */

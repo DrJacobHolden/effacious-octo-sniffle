@@ -81,6 +81,20 @@ public class Campaign {
 		}
 	}
 	
+	/**
+	 * Removes an event from this campaign.
+	 * 
+	 * Returns false if the event is not part of this campaign.
+	 */
+	protected boolean removeEvent(Event e) {
+		if(_events.contains(e)) {
+			_events.remove(e);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return _name;

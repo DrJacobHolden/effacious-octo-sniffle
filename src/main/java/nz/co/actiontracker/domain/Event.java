@@ -4,11 +4,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,6 +19,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -34,37 +38,35 @@ public class Event {
 	 * Methods/Functions
 	 */
 	
+	/**
+	 * RSVP an activist with this event.
+	 * 
+	 * Returns false if the activist is already rsvped.
+	 */
+	public boolean rsvp(Activist a) {
+		if(_attendees.contains(a)) {
+			return false;
+		}
+		_attendees.add(a);
+		return true;
+	}
+	
+	/**
+	 * Remove an activist from this event.
+	 * 
+	 * Returns false if the activist is not rsvped.
+	 */
+	public boolean unrsvp(Activist a) {
+		if(!_attendees.contains(a)) {
+			return false;
+		}
+		_attendees.remove(a);
+		return true;
+	}
+	
 	@Override
 	public String toString() {
 		return _name;
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if(!(obj instanceof Event))
-			return false;
-		if( obj == this)
-			return true;
-		
-		Event a = (Event) obj;
-		return new EqualsBuilder().
-				append(_name, a._name).
-				append(_eventDate, a._eventDate).
-				append(_creator, a._creator).
-				append(_campaign, a._campaign).
-				append(_location, a._location).
-				isEquals();
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17,31).
-				append(_name).
-				append(_eventDate).
-				append(_creator).
-				append(_location).
-				append(_campaign).
-				toHashCode();
 	}
 	
 	/*
@@ -118,11 +120,17 @@ public class Event {
 	private Campaign _campaign;
 	
 	/**
-	 * The IDs of the attending activists
+	 * The activists who are subscribed to this campaign.
+	 * 
+	 * Many activists can be subscribed to a campaign, and
+	 * an activist can subscribe to many campaigns.
 	 */
-	@ElementCollection
-	@Column(name="AttendeeID")
-	private Set<Long> attendees = new HashSet<Long>();
+	@ManyToMany(
+			cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+			mappedBy = "_rsvped",
+			targetEntity = Activist.class
+			)
+	private Set<Activist> _attendees = new HashSet<Activist>();
 	
 	/*
 	 * Constructors
