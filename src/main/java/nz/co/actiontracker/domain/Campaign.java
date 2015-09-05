@@ -4,11 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,9 +18,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -40,30 +34,36 @@ import org.slf4j.LoggerFactory;
 @XmlRootElement
 public class Campaign {
 	
-	private static Logger _logger = LoggerFactory.getLogger(Campaign.class);
-	
 	/*
 	 * Functions/Methods
 	 */
 	
 	/**
 	 * Adds an activist as a subscriber to this campaign.
+	 * 
+	 * Returns false if the activist is already subscribed to the campaign.
 	 */
-	protected void addSubscriber(Activist sub) {
-		if (!subscribers.contains(sub))
+	protected boolean addSubscriber(Activist sub) {
+		if (!subscribers.contains(sub)) {
 			subscribers.add(sub);
-		else
-			_logger.warn(sub.toString() + " is already subscribed to " + this.toString());
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
 	 * Removes an activist from the subscribed list of this campaign.
+	 * 
+	 * Returns false if the activist is not already subscribed to this campaign.
 	 */
-	protected void removeSubscriber(Activist sub) {
-		if (subscribers.contains(sub))
+	protected boolean removeSubscriber(Activist sub) {
+		if (subscribers.contains(sub)) {
 			subscribers.remove(sub);
-		else
-			_logger.warn(sub.toString() + " is not subscribed to " + this.toString());
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	@Override

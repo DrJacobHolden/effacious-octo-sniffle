@@ -1,5 +1,6 @@
 package nz.co.actiontracker.domain;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -94,7 +95,7 @@ public class DomainTest extends JpaTest {
 
 		_logger.info("The activists have been created.");
 		
-		jim.subscribeTo(camp);
+		assertTrue(jim.subscribeTo(camp));
 
 		_logger.info(jim.toString() + " has subscribed to " + camp.toString());
 
@@ -121,11 +122,11 @@ public class DomainTest extends JpaTest {
 
 		_logger.info("The activists have been created.");
 		
-		jim.subscribeTo(camp);
+		assertTrue(jim.subscribeTo(camp));
 
 		_logger.info(jim.toString() + " has subscribed to " + camp.toString());
 
-		jim.unsubscribeFrom(camp);
+		assertTrue(jim.unsubscribeFrom(camp));
 
 		_logger.info(jim.toString() + " has unsubscribed from " + camp.toString());
 
@@ -138,6 +139,9 @@ public class DomainTest extends JpaTest {
 		_logger.info("Finishing unsubscribeFromCampaign test.");
 	}
 
+	/**
+	 * Tests adding an article to a KB.
+	 */
 	@Test
 	public void addArticleToKB() {
 		_logger.info("Beginning addArticleToKB test.");
@@ -148,9 +152,38 @@ public class DomainTest extends JpaTest {
 		
 		KnowledgeBase KB = camp.getKB();
 				
-		KB.addArticle("John Key, Prime Minister or Predator?", "www.google.com", camp.getCreator().getId());
+		assertTrue(KB.addArticle("John Key, Prime Minister or Predator?", "www.google.com", camp.getCreator().getId()));
 		
 		_logger.info("Created article " + KB.getArticles().toArray()[0].toString() + " in the " + KB.toString() + " Knowledge Base.");
+		
+		_entityManager.persist(camp.getCreator());
+		_entityManager.persist(camp);
+		
+		_entityManager.getTransaction().commit();
+
+		_logger.info("Finishing addArticleToKB test.");
+	}
+	
+	/**
+	 * Tests removing an article from a KB.
+	 */
+	@Test
+	public void removeArticleFromKB() {
+		_logger.info("Beginning removeArticleFromKB test.");
+
+		_entityManager.getTransaction().begin();
+		
+		Campaign camp = setupCampaign();
+		
+		KnowledgeBase KB = camp.getKB();
+				
+		assertTrue(KB.addArticle("John Key, Prime Minister or Predator?", "www.google.com", camp.getCreator().getId()));
+		
+		_logger.info("Created article " + KB.getArticles().toArray()[0].toString() + " in the " + KB.toString() + " Knowledge Base.");
+		
+		assertTrue(KB.removeArticle("John Key, Prime Minister or Predator?", "www.google.com", camp.getCreator().getId()));
+		
+		_logger.info("Removed an article from the " + KB.toString() + " Knowledge Base.");
 		
 		_entityManager.persist(camp.getCreator());
 		_entityManager.persist(camp);

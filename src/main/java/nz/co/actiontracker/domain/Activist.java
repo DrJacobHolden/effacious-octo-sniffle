@@ -8,7 +8,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,44 +31,49 @@ import org.slf4j.LoggerFactory;
 @Table(name="ACTIVISTS")
 @XmlRootElement(name="activist")
 public class Activist {
-	
+
 	private static Logger _logger = LoggerFactory.getLogger(Activist.class);
-	
+
 	/*
 	 * Functions/Methods
 	 */
-	
+
 	/**
 	 * Subscribe to a campaign.
+	 * 
+	 * Returns false if the activist is already subscribed to the campaign.
 	 * 
 	 * @param campaign
 	 * 		The campaign to subscribe to.
 	 */
-	public void subscribeTo(Campaign campaign) {
-		if(!_subscribed.contains(campaign)) {
+	public boolean subscribeTo(Campaign campaign) {
+		if(!_subscribed.contains(campaign) && campaign.addSubscriber(this)) {
 			_subscribed.add(campaign);
-			campaign.addSubscriber(this);
+			return true;
 		} else {
 			_logger.warn(this.toString() + "is already subscribed to " + campaign.toString());
+			return false;
 		}
-		
 	}
 
 	/**
 	 * Unsubscribe from a campaign.
 	 * 
+	 * Returns false if the activist is not subscribed to the campaign.
+	 * 
 	 * @param campaign
 	 * 		The campaign to unsubscribe from.
 	 */
-	public void unsubscribeFrom(Campaign campaign) {
-		if (_subscribed.contains(campaign)) {
+	public boolean unsubscribeFrom(Campaign campaign) {
+		if (_subscribed.contains(campaign) && campaign.removeSubscriber(this)) {
 			_subscribed.remove(campaign);
-			campaign.removeSubscriber(this);
+			return true;
 		} else {
 			_logger.warn(this.toString() + " is not subscribed to " + campaign.toString());
+			return false;
 		}
 	}
-	
+
 	/**
 	 * Makes this activist the owner of a campaign.
 	 * 
@@ -80,16 +84,16 @@ public class Activist {
 		created.add(campaign);
 		campaign.setCreator(this);
 	}
-	
+
 	@Override
 	public String toString() {
 		return _username;
 	}
-	
+
 	/*
 	 * Fields
 	 */
-	
+
 	@Id
 	@GeneratedValue(generator="ID_GENERATOR")
 	private long _id;
@@ -142,7 +146,7 @@ public class Activist {
 	/*
 	 * Constructors
 	 */
-	
+
 	public Activist(String username, String email, Address address) {
 		this._username = username;
 		this._email = email;
@@ -155,10 +159,10 @@ public class Activist {
 	public Activist(String username, String email) {
 		this(username, email, null);
 	}
-	
+
 	protected Activist() {}
-	
-	
+
+
 	/*
 	 * Setters and Getters
 	 */
@@ -170,7 +174,7 @@ public class Activist {
 	public long getId() {
 		return _id;
 	}
-	
+
 	public Collection<Campaign> getSubscribed() {
 		return _subscribed;
 	}
