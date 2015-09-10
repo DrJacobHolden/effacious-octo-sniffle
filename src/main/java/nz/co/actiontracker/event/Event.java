@@ -1,4 +1,4 @@
-package nz.co.actiontracker.domain;
+package nz.co.actiontracker.event;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -22,6 +22,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nz.co.actiontracker.activist.Activist;
+import nz.co.actiontracker.campaign.Campaign;
+
 /**
  * 
  * Represents an Event such as a protest or a rally.
@@ -31,7 +34,6 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @Table(name="EVENTS")
-@XmlRootElement
 public class Event {
 	
 	/*
@@ -156,11 +158,11 @@ public class Event {
 		return _campaign;
 	}
 	
-	protected void setCreator(Activist a) {
+	public void setCreator(Activist a) {
 		_creator = a;
 	}
 
-	protected void setCampaign(Campaign c) {
+	public void setCampaign(Campaign c) {
 		_campaign = c;
 	}
 }

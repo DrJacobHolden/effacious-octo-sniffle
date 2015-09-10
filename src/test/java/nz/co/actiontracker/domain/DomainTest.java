@@ -10,6 +10,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nz.co.actiontracker.activist.Activist;
+import nz.co.actiontracker.campaign.Campaign;
+import nz.co.actiontracker.campaign.knowledgebase.KnowledgeBase;
+import nz.co.actiontracker.event.Event;
+
 public class DomainTest extends JpaTest {
 
 	private static Logger _logger = LoggerFactory.getLogger(DomainTest.class);

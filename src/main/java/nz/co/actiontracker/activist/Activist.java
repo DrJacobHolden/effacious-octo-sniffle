@@ -1,4 +1,4 @@
-package nz.co.actiontracker.domain;
+package nz.co.actiontracker.activist;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,6 +21,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nz.co.actiontracker.campaign.Campaign;
+import nz.co.actiontracker.event.Event;
+
 /**
  * Class to represent an Activist. This is created
  * by a  user if they choose to sign up and persists
@@ -30,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @Table(name="ACTIVISTS")
-@XmlRootElement(name="activist")
 public class Activist {
 
 	private static Logger _logger = LoggerFactory.getLogger(Activist.class);
@@ -252,6 +254,13 @@ public class Activist {
 	/*
 	 * Constructors
 	 */
+	
+	public Activist(long id, String username, String email, Address address) {
+		this._id = id;
+		this._username = username;
+		this._email = email;
+		this._address = address;
+	}
 
 	public Activist(String username, String email, Address address) {
 		this._username = username;
@@ -279,6 +288,14 @@ public class Activist {
 
 	public long getId() {
 		return _id;
+	}
+	
+	public Address getAddress() {
+		return _address;
+	}
+	
+	public String getEmail() {
+		return _email;
 	}
 
 	public Collection<Campaign> getSubscribed() {

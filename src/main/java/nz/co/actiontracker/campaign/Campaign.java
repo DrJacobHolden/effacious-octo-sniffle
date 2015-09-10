@@ -1,4 +1,4 @@
-package nz.co.actiontracker.domain;
+package nz.co.actiontracker.campaign;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,6 +18,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import nz.co.actiontracker.activist.Activist;
+import nz.co.actiontracker.campaign.knowledgebase.KnowledgeBase;
+import nz.co.actiontracker.event.Event;
 
 /**
  * 
@@ -43,7 +47,7 @@ public class Campaign {
 	 * 
 	 * Returns false if the activist is already subscribed to the campaign.
 	 */
-	protected boolean addSubscriber(Activist sub) {
+	public boolean addSubscriber(Activist sub) {
 		if (!_subscribers.contains(sub)) {
 			_subscribers.add(sub);
 			return true;
@@ -57,7 +61,7 @@ public class Campaign {
 	 * 
 	 * Returns false if the activist is not already subscribed to this campaign.
 	 */
-	protected boolean removeSubscriber(Activist sub) {
+	public boolean removeSubscriber(Activist sub) {
 		if (_subscribers.contains(sub)) {
 			_subscribers.remove(sub);
 			return true;
@@ -71,7 +75,7 @@ public class Campaign {
 	 * 
 	 * Return false if the event is already part of this campaign.
 	 */
-	protected boolean addEvent(Event e) {
+	public boolean addEvent(Event e) {
 		if(_events.contains(e)) {
 			return false;
 		} else {
@@ -86,7 +90,7 @@ public class Campaign {
 	 * 
 	 * Returns false if the event is not part of this campaign.
 	 */
-	protected boolean removeEvent(Event e) {
+	public boolean removeEvent(Event e) {
 		if(_events.contains(e)) {
 			_events.remove(e);
 			return true;
@@ -196,7 +200,7 @@ public class Campaign {
 		return _id;
 	}
 
-	protected void setCreator(Activist creator) {
+	public void setCreator(Activist creator) {
 		_creator = creator;
 	}
 	
