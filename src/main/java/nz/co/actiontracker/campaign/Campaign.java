@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import nz.co.actiontracker.activist.Activist;
+import nz.co.actiontracker.activist.ActivistDTO;
 import nz.co.actiontracker.campaign.knowledgebase.KnowledgeBase;
 import nz.co.actiontracker.event.Event;
 
@@ -35,7 +36,6 @@ import nz.co.actiontracker.event.Event;
  */
 @Entity
 @Table(name="CAMPAIGNS")
-@XmlRootElement
 public class Campaign {
 	
 	/*
@@ -142,7 +142,7 @@ public class Campaign {
 	 */
 	@OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-	private KnowledgeBase _KB;
+	private KnowledgeBase _KB = new KnowledgeBase();
 	
 	/**
 	 * The activists who are subscribed to this campaign.
@@ -179,15 +179,20 @@ public class Campaign {
 
 	public Campaign(String name) {
 		_name = name;
-		_KB = new KnowledgeBase(name);
+		_KB.setName(name);
 	}
-
-	protected Campaign() {}
+	
+	public Campaign(long id, String name, Activist creator) {
+		_id = id;
+		_name = name;
+		_creator = creator;
+		_KB.setName(name);
+	}
 	
 	/*
 	 * Setters and Getters
 	 */
-	
+
 	public Collection<Activist> getSubscribers() {
 		return _subscribers;
 	}

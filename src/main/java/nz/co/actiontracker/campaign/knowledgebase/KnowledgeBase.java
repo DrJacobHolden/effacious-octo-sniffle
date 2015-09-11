@@ -104,15 +104,21 @@ public class KnowledgeBase {
 	 * Constructors
 	 */
 	
-	public KnowledgeBase(String name) {
+	public KnowledgeBase(long id, String name, Set<Article> articles) {
+		_id = id;
 		_name = name;
+		_articles = articles;
 	}
 	
-	protected KnowledgeBase() {}
+	public KnowledgeBase() {}
 	
 	/*
 	 * Getters and Setters
 	 */
+	
+	public void setName(String name) {
+		_name = name;
+	}
 	
 	public Set<Article> getArticles() {
 		return _articles;

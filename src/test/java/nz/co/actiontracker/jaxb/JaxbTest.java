@@ -9,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import nz.co.actiontracker.activist.ActivistDTO;
+import nz.co.actiontracker.campaign.CampaignDTO;
 
 public class JaxbTest {
 
@@ -18,7 +19,7 @@ public class JaxbTest {
 	
 	@BeforeClass
 	public static void setup() throws JAXBException {
-		_jaxbContext = JAXBContext.newInstance(ActivistDTO.class);
+		_jaxbContext = JAXBContext.newInstance(ActivistDTO.class, CampaignDTO.class);
 		_marshaller = _jaxbContext.createMarshaller();
 		_unmarshaller = _jaxbContext.createUnmarshaller();
 		
@@ -30,5 +31,13 @@ public class JaxbTest {
 		ActivistDTO a = new ActivistDTO("John Travolta", "j.travolta@hollywood.com", null);
 		
 		_marshaller.marshal(a, System.out);
+	}
+	
+	@Test
+	public void marshallCampaign() throws JAXBException {
+		ActivistDTO a = new ActivistDTO("John Travolta", "j.travolta@hollywood.com", null);
+		CampaignDTO c = new CampaignDTO("Go to the Shops", a);
+		
+		_marshaller.marshal(c, System.out);
 	}
 }
