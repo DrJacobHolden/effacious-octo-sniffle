@@ -138,6 +138,23 @@ public class Event {
 	 * Constructors
 	 */
 	
+	public Event(long id, String name, Date date, String loc, Activist creator, Campaign campaign) {
+		_id = id;
+		_name = name;
+		_eventDate = date;
+		_location = loc;
+		_creator = creator;
+		_campaign = campaign;
+	}
+	
+	public Event(String name, Date date, String loc, Activist creator, Campaign campaign) {
+		_name = name;
+		_eventDate = date;
+		_location = loc;
+		_creator = creator;
+		_campaign = campaign;
+	}
+	
 	public Event(String name, Date date, String loc) {
 		_name = name;
 		_eventDate = date;
@@ -164,5 +181,25 @@ public class Event {
 
 	public void setCampaign(Campaign c) {
 		_campaign = c;
+	}
+	
+	public long getId() {
+		return _id;
+	}
+	
+	public String getName() {
+		return _name;
+	}
+	
+	public Date getDate() {
+		return _eventDate;
+	}
+	
+	public String getLocation() {
+		return _location;
+	}
+	
+	public Set<Activist> getAttendees() {
+		return _attendees;
 	}
 }

@@ -189,6 +189,12 @@ public class Campaign {
 		_KB.setName(name);
 	}
 	
+	public Campaign(long id, String name) {
+		_id = id;
+		_name = name;
+		_KB.setName(name);
+	}
+	
 	/*
 	 * Setters and Getters
 	 */

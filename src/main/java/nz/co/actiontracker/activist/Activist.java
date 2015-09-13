@@ -261,6 +261,12 @@ public class Activist {
 		this._email = email;
 		this._address = address;
 	}
+	
+	public Activist(long id, String username, String email) {
+		this._id = id;
+		this._username = username;
+		this._email = email;
+	}
 
 	public Activist(String username, String email, Address address) {
 		this._username = username;

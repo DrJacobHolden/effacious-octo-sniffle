@@ -2,6 +2,9 @@ package nz.co.actiontracker.campaign.knowledgebase;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -11,7 +14,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Represents an article in the knowledgebase.
  */
 @Embeddable
-@XmlRootElement
+@XmlRootElement(name="article")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Article {
 	
 	/*
@@ -55,18 +59,21 @@ public class Article {
 	 * The name of the article.
 	 */
 	@Column(nullable=false)
+	@XmlElement(name="name")
 	private String _name;
 	
 	/**
 	 * The link to the article.
 	 */
 	@Column(nullable=false)
+	@XmlElement(name="link")
 	private String _link;
 	
 	/**
 	 * The ID of the creator.
 	 */
 	@Column(nullable=false)
+	@XmlElement(name="creatorId")
 	private long _creatorId;
 	
 	/*

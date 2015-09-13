@@ -10,6 +10,11 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.slf4j.Logger;
@@ -29,7 +34,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Entity
-@XmlRootElement
+@XmlRootElement(name="knowledgebase")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class KnowledgeBase {
 	
 	private static Logger _logger = LoggerFactory.getLogger(KnowledgeBase.class);
@@ -88,9 +94,11 @@ public class KnowledgeBase {
 	
 	@Id
 	@GeneratedValue(generator="ID_GENERATOR")
+	@XmlAttribute(name="id")
 	private long _id;
 	
 	@Column(unique=true, name="NAME", nullable=false)
+	@XmlElement(name="name")
 	private String _name;
 	
 	@ElementCollection
@@ -98,6 +106,8 @@ public class KnowledgeBase {
 	@AttributeOverride(
 			name="_name",
 			column = @Column(name="ARTICLE_NAME",nullable=false))
+	@XmlElement(name="article")
+	@XmlElementWrapper(name="articles")
 	protected Set<Article> _articles = new HashSet<Article>();
 	
 	/*
