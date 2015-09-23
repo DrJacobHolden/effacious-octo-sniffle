@@ -307,4 +307,16 @@ public class Activist {
 	public Collection<Campaign> getSubscribed() {
 		return _subscribed;
 	}
+
+	public void setUsername(String get_username) {
+		_username = get_username;
+	}
+
+	public void setEmail(String get_email) {
+		_email = get_email;
+	}
+
+	public void setAddress(Address get_address) {
+		_address = get_address;
+	}
 }
