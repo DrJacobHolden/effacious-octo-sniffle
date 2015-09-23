@@ -3,10 +3,17 @@ package nz.co.actiontracker.activist;
 public class ActivistMapper {
 
 	public static Activist toDomainModel(ActivistDTO dtoActivist) {
-		Activist fullActivist = new Activist(dtoActivist.get_id(),
-				dtoActivist.get_username(),
-				dtoActivist.get_email(),
-				dtoActivist.get_address());
+		Activist fullActivist;
+		if (dtoActivist.get_id() != 0) {
+			fullActivist = new Activist(dtoActivist.get_id(),
+					dtoActivist.get_username(),
+					dtoActivist.get_email(),
+					dtoActivist.get_address());
+		} else {
+			fullActivist = new Activist(dtoActivist.get_username(),
+					dtoActivist.get_email(),
+					dtoActivist.get_address());
+		}
 		return fullActivist;
 	}
 	

@@ -44,7 +44,7 @@ public class JaxbTest {
 	/**
 	 * Tests the marshalling of a simple activist DTO.
 	 */
-	@Test
+	//@Test
 	public void marshallActivist() throws JAXBException {
 		ActivistDTO a = new ActivistDTO(
 				"John Travolta", "j.travolta@hollywood.com", null);
@@ -55,7 +55,7 @@ public class JaxbTest {
 	/**
 	 * Tests the marshalling of a simple campaign DTO.
 	 */
-	@Test
+	//@Test
 	public void marshallCampaign() throws JAXBException {
 		ActivistDTO a = new ActivistDTO(
 				"John Travolta", "j.travolta@hollywood.com", null);
@@ -68,7 +68,7 @@ public class JaxbTest {
 	/**
 	 * Tests the marshalling of a KB with a single article.
 	 */
-	@Test
+	//@Test
 	public void marshallKB() throws JAXBException {
 		Campaign c = new Campaign(
 				"Stop Children Starving");
@@ -83,7 +83,7 @@ public class JaxbTest {
 	/**
 	 * Tests the marshalling of an event with a single attendee.
 	 */
-	@Test
+	//@Test
 	public void marshallEvent() throws JAXBException {
 		Activist john = new Activist(
 				"JTravolta", "j.travolta@hollywood.com");

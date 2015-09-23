@@ -26,7 +26,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests that a simple activist can be created and persisted.
 	 */
-	@Test
+	//@Test
 	public void persistActivist() {
 
 		_logger.info("Beginning persistActivist test.");
@@ -55,7 +55,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests that a simple campaign can be created and persisted.
 	 */
-	@Test
+	//@Test
 	public void createCampaign() {
 		_logger.info("Beginning createCampaign test.");
 
@@ -74,7 +74,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests subscribing to a simple campaign.
 	 */
-	@Test
+	//@Test
 	public void subscribeToCampaign() {
 		_logger.info("Beginning subscribeToCampaign test.");
 
@@ -101,7 +101,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests unsubscribing from a simple campaign.
 	 */
-	@Test
+	//@Test
 	public void unsubscribeFromCampaign() {
 		_logger.info("Beginning unsubscribeFromCampaign test.");
 
@@ -132,7 +132,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests adding an article to a KB.
 	 */
-	@Test
+	//@Test
 	public void addArticleToKB() {
 		_logger.info("Beginning addArticleToKB test.");
 
@@ -157,7 +157,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests removing an article from a KB.
 	 */
-	@Test
+	//@Test
 	public void removeArticleFromKB() {
 		_logger.info("Beginning removeArticleFromKB test.");
 
@@ -186,7 +186,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests creating an event.
 	 */
-	@Test
+	//@Test
 	public void createEvent() {
 		_logger.info("Beginning createEvent test.");
 
@@ -206,7 +206,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests removing an event.
 	 */
-	@Test
+	//@Test
 	public void removeEvent() {
 		_logger.info("Beginning removeEvent test.");
 
@@ -233,7 +233,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests RSVPing to an event
 	 */
-	@Test
+	//@Test
 	public void RSVPEvent() {
 		_logger.info("Beginning RSVPEvent test.");
 
@@ -260,7 +260,7 @@ public class DomainTest extends JpaTest {
 	/**
 	 * Tests ,unRSVPing to an event
 	 */
-	@Test
+	//@Test
 	public void unRSVPEvent() {
 		_logger.info("Beginning unRSVPEvent test.");
 
