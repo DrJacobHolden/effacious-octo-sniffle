@@ -319,4 +319,14 @@ public class Activist {
 	public void setAddress(Address get_address) {
 		_address = get_address;
 	}
+
+	public Set<Event> get_rsvped() {
+		return _rsvped;
+	}
+
+	public void set_rsvped(Set<Event> _rsvped) {
+		this._rsvped = _rsvped;
+	}
+	
+	
 }

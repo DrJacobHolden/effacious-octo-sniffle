@@ -1,5 +1,6 @@
 package nz.co.actiontracker.jaxb;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.xml.bind.JAXBContext;
@@ -9,6 +10,10 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 import nz.co.actiontracker.activist.Activist;
 import nz.co.actiontracker.activist.ActivistDTO;
@@ -25,6 +30,7 @@ public class JaxbTest {
 	private static JAXBContext _jaxbContext = null;
 	private static Marshaller _marshaller = null;
 	private static Unmarshaller _unmarshaller = null;
+	private static ObjectMapper mapper = new ObjectMapper();
 	
 	@BeforeClass
 	public static void setup() throws JAXBException {
@@ -35,6 +41,7 @@ public class JaxbTest {
 				Article.class,
 				EventDTO.class
 				);
+		mapper.registerModule(new JaxbAnnotationModule());
 		_marshaller = _jaxbContext.createMarshaller();
 		_unmarshaller = _jaxbContext.createUnmarshaller();
 		
@@ -44,7 +51,7 @@ public class JaxbTest {
 	/**
 	 * Tests the marshalling of a simple activist DTO.
 	 */
-	//@Test
+	@Test
 	public void marshallActivist() throws JAXBException {
 		ActivistDTO a = new ActivistDTO(
 				"John Travolta", "j.travolta@hollywood.com", null);
@@ -53,9 +60,22 @@ public class JaxbTest {
 	}
 	
 	/**
+	 * Tests the marshalling of a simple activist DTO to json.
+	 * Json will work with all classes that Xml works for in this
+	 * project by using the mapper instead of the marshaller.
+	 */
+	@Test
+	public void marshallActivistJson() throws JsonGenerationException, IOException {
+		ActivistDTO a = new ActivistDTO(
+				"John Travolta", "j.travolta@hollywood.com", null);
+		
+		mapper.writeValue(System.out, a);
+	}
+	
+	/**
 	 * Tests the marshalling of a simple campaign DTO.
 	 */
-	//@Test
+	@Test
 	public void marshallCampaign() throws JAXBException {
 		ActivistDTO a = new ActivistDTO(
 				"John Travolta", "j.travolta@hollywood.com", null);
@@ -68,7 +88,7 @@ public class JaxbTest {
 	/**
 	 * Tests the marshalling of a KB with a single article.
 	 */
-	//@Test
+	@Test
 	public void marshallKB() throws JAXBException {
 		Campaign c = new Campaign(
 				"Stop Children Starving");
@@ -83,7 +103,7 @@ public class JaxbTest {
 	/**
 	 * Tests the marshalling of an event with a single attendee.
 	 */
-	//@Test
+	@Test
 	public void marshallEvent() throws JAXBException {
 		Activist john = new Activist(
 				"JTravolta", "j.travolta@hollywood.com");

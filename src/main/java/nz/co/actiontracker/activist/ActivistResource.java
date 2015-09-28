@@ -1,14 +1,12 @@
 package nz.co.actiontracker.activist;
 
-import java.io.InputStream;
 import java.net.URI;
-import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -16,11 +14,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import nz.co.actiontracker.EMFactorySingleton;
+import nz.co.actiontracker.event.Event;
+import nz.co.actiontracker.event.EventDTO;
+import nz.co.actiontracker.event.EventMapper;
 
 /**
  * 
@@ -41,11 +45,16 @@ import org.slf4j.LoggerFactory;
 public class ActivistResource {
 
 	private static Logger _logger = LoggerFactory.getLogger(ActivistResource.class);
+	
+	private EntityManagerFactory EMF = EMFactorySingleton.getInstance();
 
+	/**
+	 * Adds an activist to the database.
+	 */
 	@POST
 	@Consumes("application/xml")
 	public Response signUp(ActivistDTO a) {
-		EntityManager em = Persistence.createEntityManagerFactory("scratchPU").createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		Activist activist = ActivistMapper.toDomainModel(a);
 		em.getTransaction().begin();
 		em.persist(activist);
@@ -54,11 +63,14 @@ public class ActivistResource {
 		return Response.created(URI.create("/activists/" + activist.getId())).build();
 	}
 
+	/**
+	 * Returns an activist specified by an ID
+	 */
 	@GET
 	@Path("/{id}")
 	@Produces("application/xml")
 	public ActivistDTO retrieveActivist(@PathParam("id") long id) {
-		EntityManager em = Persistence.createEntityManagerFactory("scratchPU").createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		em.getTransaction().begin();
 		Activist a = em.find(Activist.class, id);
 		if (a == null) {
@@ -69,11 +81,70 @@ public class ActivistResource {
 		return ActivistMapper.toDTO(a);
 	}
 	
+	/**
+	 * Returns a list of activists, this supports limited query parameters,
+	 * allowing you to specify an id range in the database.
+	 * 
+	 * It should probably be noted that this: http://www.mkyong.com/webservices/jax-rs/jax-rs-queryparam-example/
+	 * was of immense help when working out how to do this.
+	 */
+	@GET
+	@Produces("application/xml")
+	public List<ActivistDTO> retrieveActivists(@Context UriInfo info) {
+		
+		long rangeFrom = 0;
+		long rangeTo = Long.MAX_VALUE;
+		String from = info.getQueryParameters().getFirst("from");
+		String to = info.getQueryParameters().getFirst("to");
+		if(from != null) {
+			rangeFrom = Long.parseLong(from);
+		}
+		if(to != null) {
+			rangeTo = Long.parseLong(to);
+		}
+		
+		EntityManager em = EMF.createEntityManager();
+		em.getTransaction().begin();
+		List<Activist> list = em.createQuery("select activist_ from Activist activist_ where activist_.id > " + rangeFrom + " AND activist_.id < " + rangeTo).getResultList();
+		List<ActivistDTO> listActivists = new ArrayList<ActivistDTO>();
+		for (int i = 0; i < list.size(); i++) {
+			listActivists.add(ActivistMapper.toDTO(list.get(i)));
+		}
+		em.getTransaction().commit();
+		em.close();
+		return listActivists;
+	}
+	
+	/**
+	 * Returns all the events an activist is attending
+	 */
+	@GET
+	@Path("/{id}/events")
+	@Produces("application/xml")
+	public List<EventDTO> retrieveActivistEvents(@PathParam("id") long id) {
+		EntityManager em = EMF.createEntityManager();
+		em.getTransaction().begin();
+		Activist a = em.find(Activist.class, id);
+		if (a == null) {
+			throw new WebApplicationException(404);
+		}
+		List<EventDTO> listEvents = new ArrayList<EventDTO>();
+		for (Event e : a.get_rsvped()) {
+			listEvents.add(EventMapper.toDTO(e));
+		}
+		em.getTransaction().commit();
+		em.close();
+		return listEvents;
+	}
+	
+	/**
+	 * Updates an activist specified by an id.
+	 */
 	@PUT
 	@Path("/{id}")
 	@Consumes("application/xml")
 	public void updateActivist(@PathParam("id") long id, ActivistDTO a) {
-		EntityManager em = Persistence.createEntityManagerFactory("scratchPU").createEntityManager();
+		EntityManager em = EMF.createEntityManager();
 		em.getTransaction().begin();
 		Activist activist = em.find(Activist.class, id);
 		if (activist == null) {

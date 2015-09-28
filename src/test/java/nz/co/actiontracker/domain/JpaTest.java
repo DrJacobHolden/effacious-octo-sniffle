@@ -10,7 +10,6 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -18,6 +17,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import nz.co.actiontracker.EMFactorySingleton;
 
 /**
  * Provided by Ian Warren, a useful class
@@ -41,7 +42,7 @@ public abstract class JpaTest {
 		_jdbcConnection = DriverManager.getConnection(
 				"jdbc:h2:~/test;mv_store=false","sa", "sa");
 		clearDatabase(true);
-		_factory = Persistence.createEntityManagerFactory("scratchPU");
+		_factory = EMFactorySingleton.getInstance();//Persistence.createEntityManagerFactory("scratchPU");
 	}
 	
 	@AfterClass

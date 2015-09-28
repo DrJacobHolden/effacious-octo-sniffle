@@ -2,30 +2,48 @@ package nz.co.actiontracker.webservice;
 
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Result;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nz.co.actiontracker.TestHelper;
 import nz.co.actiontracker.activist.Activist;
 import nz.co.actiontracker.activist.ActivistDTO;
 import nz.co.actiontracker.activist.ActivistMapper;
 import nz.co.actiontracker.campaign.CampaignDTO;
 import nz.co.actiontracker.campaign.knowledgebase.Article;
 import nz.co.actiontracker.campaign.knowledgebase.KnowledgeBase;
+import nz.co.actiontracker.event.Event;
 import nz.co.actiontracker.event.EventDTO;
 
+/**
+ * Tests various calls to the webservice. Currently these
+ * only relate to the Activist class but if anyone ever
+ * bothered finishing this it should test all the possible
+ * URIs.
+ * 
+ * TODO:// These tests need to be commented out and the tests
+ * in DomainTest uncommented in order to test persistance without
+ * using the API. This is because the JpaTest class that DomainTest
+ * extends from clears the entire database and demands a new Entity
+ * Manager Factory. (Which is in conflict with the singleton used here.)
+ */
 public class WebServiceTest {
 
 	private Logger _logger = LoggerFactory.getLogger(WebServiceTest.class);
@@ -54,6 +72,9 @@ public class WebServiceTest {
 	 * the webservice for persisting as an activist. The test then retrieves
 	 * this activist, testing the GET method. Finally, the Activist is updated
 	 * and then retrieved once again.
+	 * 
+	 * The Activist has a random number appended to the username as this field
+	 * is enforced as unique in the database.
 	 */
 	@Test
 	public void testSignUp() {
@@ -64,7 +85,7 @@ public class WebServiceTest {
 			_logger.info("Creating a new Activist...");
 
 			String xml = "<activist>"
-					+ "<username>FrankieIsACutie"+ new Random().nextInt(1000) +"</username>"
+					+ "<username>JohnTravolta"+ new Random().nextInt(1000) +"</username>"
 					+ "<email>JTravolta@hollywood.com</email>"
 					+ "<address></address>"
 					+ "</activist>";
@@ -91,7 +112,7 @@ public class WebServiceTest {
 			// Create a XML representation of the Activist, changing the value username
 			// and using a null address
 			String updateActivist = "<activist>"
-					+ "<username>FrankieIsACutie"+ new Random().nextInt(1000) +"</username>"
+					+ "<username>JohnTravolta"+ new Random().nextInt(1000) +"</username>"
 					+ "<email>JTravolta@hollywood.com</email>"
 					+ "</activist>";
 
@@ -116,6 +137,54 @@ public class WebServiceTest {
 			a = ActivistMapper.toDomainModel(activist);
 			_logger.info("Retrieved Activist:\n" + a.toString());
 
+		} finally {
+			client.close();
+		}
+	}
+	
+	/**
+	 * This tests listing all the activists in existance. It does not
+	 * specify a range so the default range is used (0 - max long value)
+	 */
+	@Test
+	public void testListActivist() {
+		Client client = ClientBuilder.newClient();
+
+		try {
+
+			_logger.info("Querying all the Activists...");
+			List<ActivistDTO> activists = client.target("http://0.0.0.0:8080/services/activists").request().get(new GenericType<List<ActivistDTO>>(){});
+			
+			for (ActivistDTO a : activists) {
+				Activist act = ActivistMapper.toDomainModel(a);
+				System.out.println("Retrieved Activist: " + act.toString());
+			}
+			
+		} finally {
+			client.close();
+		}
+	}
+	
+	/**
+	 * This tests querying all activists with query parameters enabled.
+	 * This will return all the activists with ids between 10 and 300.
+	 * Generally this will return no activists as the id generation seems
+	 * to have quite a random range.
+	 */
+	@Test
+	public void testListActivistWithLimits() {
+		Client client = ClientBuilder.newClient();
+
+		try {
+
+			_logger.info("Querying all the Activists...");
+			List<ActivistDTO> activists = client.target("http://0.0.0.0:8080/services/activists?from=10&to=300").request().get(new GenericType<List<ActivistDTO>>(){});
+			
+			for (ActivistDTO a : activists) {
+				Activist act = ActivistMapper.toDomainModel(a);
+				System.out.println("Retrieved Activist: " + act.toString());
+			}
+			
 		} finally {
 			client.close();
 		}

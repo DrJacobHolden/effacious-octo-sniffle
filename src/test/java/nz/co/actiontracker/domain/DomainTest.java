@@ -10,11 +10,16 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import nz.co.actiontracker.TestHelper;
 import nz.co.actiontracker.activist.Activist;
 import nz.co.actiontracker.campaign.Campaign;
 import nz.co.actiontracker.campaign.knowledgebase.KnowledgeBase;
 import nz.co.actiontracker.event.Event;
 
+/**
+ * This tests adding and removing items from the database
+ * without using the webservice.
+ */
 public class DomainTest extends JpaTest {
 
 	private static Logger _logger = LoggerFactory.getLogger(DomainTest.class);
@@ -61,7 +66,7 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 
-		Campaign camp = setupCampaign();
+		Campaign camp = TestHelper.setupCampaign();
 		
 		_entityManager.persist(camp.getCreator());
 		_entityManager.persist(camp);
@@ -80,7 +85,7 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 
-		Campaign camp = setupCampaign();
+		Campaign camp = TestHelper.setupCampaign();
 		Activist jim = new Activist("JSterling", "j.sterling@youtube.com");
 
 		_logger.info("The activists have been created.");
@@ -107,7 +112,7 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 		
-		Campaign camp = setupCampaign();
+		Campaign camp = TestHelper.setupCampaign();
 		Activist jim = new Activist("JSterling", "j.sterling@youtube.com");
 
 		_logger.info("The activists have been created.");
@@ -138,7 +143,7 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 		
-		Campaign camp = setupCampaign();
+		Campaign camp = TestHelper.setupCampaign();
 		
 		KnowledgeBase KB = camp.getKB();
 				
@@ -163,7 +168,7 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 		
-		Campaign camp = setupCampaign();
+		Campaign camp = TestHelper.setupCampaign();
 		
 		KnowledgeBase KB = camp.getKB();
 				
@@ -192,7 +197,7 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 		
-		Event e = setupEvent();
+		Event e = TestHelper.setupEvent();
 		
 		_entityManager.persist(e.getCreator());
 		_entityManager.persist(e.getCampaign());
@@ -212,7 +217,7 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 		
-		Event e = setupEvent();
+		Event e = TestHelper.setupEvent();
 		
 		Activist creator = e.getCreator();
 		Campaign campaign = e.getCampaign();
@@ -239,7 +244,7 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 		
-		Event e = setupEvent();
+		Event e = TestHelper.setupEvent();
 		
 		Activist jim = new Activist("JSterling", "j.sterling@youtube.com");
 		
@@ -266,7 +271,7 @@ public class DomainTest extends JpaTest {
 
 		_entityManager.getTransaction().begin();
 		
-		Event e = setupEvent();
+		Event e = TestHelper.setupEvent();
 		
 		Activist jim = new Activist("JSterling", "j.sterling@youtube.com");
 		
@@ -286,39 +291,5 @@ public class DomainTest extends JpaTest {
 		_entityManager.getTransaction().commit();
 
 		_logger.info("Finishing unRSVPEvent test.");
-	}
-	/*
-	 * Helper functions
-	 */
-	
-	/**
-	 * Helper function that sets up a campaign and an activist.
-	 * Returns the campaign. The owner can be retrieved by using
-	 * camp.getOwner()
-	 */
-	public Campaign setupCampaign() {
-		Activist john = new Activist("JTravolta", "j.travolta@hollywood.com");
-		
-		Campaign camp = new Campaign("Build Ponytail Statue at Beehive");
-		john.createCampaign(camp);
-
-		_logger.info("The campaign " + camp.getName() + " has been created by " + camp.getCreator().toString() + ".");
-		return camp;
-	}
-
-	/**
-	 * Helper function that sets up an event.
-	 * 
-	 * This returns the event.
-	 */
-	public Event setupEvent() {
-		Campaign camp = setupCampaign();
-		Activist creator = camp.getCreator();
-		Event e = new Event("Sit-In at the Rest Home", new Date(), "The Rest Home");
-		
-		assertTrue(creator.createEvent(camp, e));
-		
-		_logger.info("The event " + e.toString() + " has been created.");
-		return e;
 	}
 }
