@@ -12,6 +12,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Class to represent an Address.
+ * 
+ * This class primarily exists to provide an example of JAXB
+ * value types.
  *
  */
 @XmlRootElement(name="address")

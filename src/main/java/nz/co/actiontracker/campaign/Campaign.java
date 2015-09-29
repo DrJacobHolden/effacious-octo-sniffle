@@ -25,14 +25,12 @@ import nz.co.actiontracker.campaign.knowledgebase.KnowledgeBase;
 import nz.co.actiontracker.event.Event;
 
 /**
- * 
  * Represents an ActionTracker campaign. This is what a user
  * subscribes to and contains the collections of events and
  * petitions. It also contains a reference to the knowledgebase.
  * 
  * In future additional collections will need to be added and
  * tracked here. The current set is simplistic.
- *
  */
 @Entity
 @Table(name="CAMPAIGNS")

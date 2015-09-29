@@ -1,0 +1,123 @@
+Tate Robertson
+Softeng 325
+Assignment 1 Report
+
+NOTE: This document has been created in Eclipse so that it can be viewed easily from Eclipse while marking. This does mean it is quite ugly. Sorry.
+
+Service Overview:
+	
+	Actiontracker is a simple web service that was designed to increase accessibility to activism for an Internet raised generation.
+	
+	Actiontracker has several core elements:
+	
+		--Activists: 
+			Activist are the users of the service, they need to be able to:
+				Sign-Up to Actiontracker
+				Modify their account
+				Subscribe to Activist creation (e.g. for admins)
+				View their account
+				View all accounts
+			
+		--Campaigns:
+			Campaigns are the foundation of Actiontracker. Without Campaigns there is nothing to track.
+			For example, a valid campaign might be reformation of drug law.
+			Users of the webservice need to be able to interact with Campaigns in a number of ways:
+				Subscribe to Campaigns: This registers an Activists interests and will provide them with updates on the progress of the campaign via email.
+				Unsubscribe from Campaigns
+				Create a Campaign
+				Remove a Campaign
+				View a Campaign
+				View the subscribers of a Campaign (i.e. to see what your friends are interested in)
+				
+		--Knowledge Bases:
+			Every Campaign has its own knowledge base. This is where relevant articles, videos, petitions etc are stored.
+			Users need to be able to contribute to a Campaigns knowledge base, they should also be able to remove things
+			that they have contributed to it.
+			
+		--Events
+			Events are fundamental to any activism cause. These include things like marches and protests. Events are associated
+			with a specific campaign and have a creator. Users should be able to interact with events in a number of ways:
+				Create events
+				Remove events they have created
+				List all events for a campaign
+				List events an activist is attending
+				View a specific event (to get details about time, date, location etc)
+				RSVP to an event
+				UnRSVP from an event
+				
+Service Design:
+
+	--Use of DTO classes:
+		Actiontracker uses DTO representations for Activists, Events and Campaigns. This decision was made after much
+		difficulty was encountered trying to apply JAXB annotations to the domain classes. This simplified the model
+		immensely whilst also making it more powerful. For example, the Activist domain class contains many lists that 
+		are needed in order to keep track of items an Activist has created (events, campaigns, articles etc). However,
+		when a user of the web service wants to view an Activist they do not care about all of this additional information,
+		using the DTO model (as opposed to @XMLTransient) it was a simple matter to create a representation without this
+		information. In future, other DTO models might be used to present other information in a user-friendly manner.
+	
+	--Entity Manager Factory Singleton:
+		Creating Entity Manager Factories is resource consuming and inefficient. As a result, the Singleton design pattern
+		has been used in the EMFactorySingleton class to ensure only one Entity Manager Factory is created.
+	
+	--JSON Implementation:
+		I included JSON as an alternative to XML in my project (example in JaxbTest.java). This was mostly because it was
+		incredibly simple to do. There are several JSON libraries available that can be simply added to your POM file and
+		then used by calling what is essentially a different type of marshaller. They can use all the existing JaxB XML
+		annotations and that is just wonderful. I don't know why anyone wouldn't want to use JSON.
+		
+	--Simple Async Implementation:
+		I implemented an Asynchronous example similar to the one shown in lectures for the chat service. In lectures this
+		was described as being a poor implementation as it is possible for you to miss chat messages that come in while the
+		previous one is being relayed to you. Obviously, it is never good to use an implementation with a fault such as this,
+		however, in this implementation it is negligible risk that this issue would arise as it would require two or more Activists
+		to sign up simultaneously to the web service. This is very unlikely to occur, and in the event that the web service
+		became popular enough for this to be an issue, the implementation would need to be updated. For now it is sufficient.
+		
+	--Unfinished Web Service Implementation:
+		This was a sad design decision to have to make. It had to be made due to a vast under-estimation of the time it would
+		take to implement each element of the domain in Jaxb and JPA. As a result the web service is fully functioning in the
+		sense of both JaxB and JPA. DomainTest.java demonstrates the full functionality of the domain model as a result. However,
+		the API  has only been implemented for the Activist class, including a subscription (async) example and a JSON example.
+		This decision was made after discussion with Andrew and in accordance with the line from the assignment description:
+			"Ultimately your Web service is a vehicle to demonstrate that you meet the criteria"
+		Hopefully, in its current form it does just that. Maybe in future I will one day complete it and make it available on the web.
+		
+	--Other Design:
+		The rest of the implementation largely displays standard functionality. A mix of value types and entity types has been used,
+		adapters are used where required and inheritance has been avoided to simplify future modification and because it was unneeded.
+		Inheritance could have been added to specify specific article types within the knowledge base.
+		
+Quality Attributes:
+	(https://en.wikipedia.org/wiki/List_of_system_quality_attributes)
+	
+	--Usability:
+		A major focus in all of my software design is usability. Frequently there is a barrier between software creators
+		and their target market. In the design of this webservice I have tried to avoid this by ensuring that the URIs
+		are logical and sensible. As a result the web service corresponds with the correct usage of the CRUD operators and
+		the URIs are named to reflect what they do. For example, A post to /services/activists creates a new activist while
+		a PUT to /services/activists/{id} updates an activist.
+		
+		Furthermore, the DTOs returned have been designed to give the user the information they want, not all of the information.
+		This is designed to increase the usability, as the user will never have to sort through mountains of unwanted data. This is
+		also why the user is able to specifically specify a range of ids that they would like to search for, when returning a list
+		of activists, in future, this would be extended to allow the user to search for specific things that match within the Activist
+		object. E.g. all Activists with usernames starting with F. However, this was beyond the scope of this assignment.
+		
+	--Simplicity:
+		Simplicity is essential in all software design. Simplicity, if done right, brings the quality attributes of modifiability,
+		maintainability and usability (from a programmer's perspective) with it. As a result it was a core concept in the design of
+		my web service. 
+		
+		The async implementation is a good example of simplicity within the code. As, although this is not the best implementation
+		it is the simplest method and works well for the job at hand. This complies with the methods of KISS.
+		
+		Another example of simplicity is the Knowledge Base setup. Initially, it was planned that copies of the article would be
+		stored in the database, including a complicated system that would prevent duplicates (in the case of an article being in
+		the knowledge base of 2 or more campaigns). However, this caused concerns regarding copyright and would have required multiple
+		sub-types depending on what content type the article was. To prevent this, a link is stored to the article. By default, this
+		also came with benefits for encapsulation.
+		
+		Finally, as mentioned above, DTOs were used to drastically reduce the complexity of the assignment. Using DTOs the whole
+		mess of ManyToMany, OneToMany and ManyToOne relationships was avoided in JaxB. This makes the code much simpler to read
+		and understand.

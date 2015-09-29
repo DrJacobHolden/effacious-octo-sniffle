@@ -3,6 +3,8 @@ package nz.co.actiontracker.activist;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -14,6 +16,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -29,17 +33,16 @@ import nz.co.actiontracker.event.EventMapper;
 /**
  * 
  * The Activist resource. Using this URI you can create a new activist,
- * update an activist and view an activist. You are also able to view
- * events an activist is attending and campaigns an activist is subbed
- * to.
+ * update an activist, view an activist and subscribe to activists being
+ * created.
+ * 
+ * You are also able to view events an activist is attending and campaigns
+ * an activist is subscribed to. (Not implemented)
  * 
  * It is not possible to delete an Activist due to technical restrictions.
  * Seriously, it would create a huge mess and just isn't worth it. The NSA
  * have probably saved all your data anyway so a delete could just send back
  * "Yes I have deleted your account" and really do nothing.
- * 
- * @author Tate
- *
  */
 @Path("/activists")
 public class ActivistResource {
@@ -47,19 +50,30 @@ public class ActivistResource {
 	private static Logger _logger = LoggerFactory.getLogger(ActivistResource.class);
 	
 	private EntityManagerFactory EMF = EMFactorySingleton.getInstance();
+	
+	private List<AsyncResponse> responses = new ArrayList<AsyncResponse>();
 
 	/**
 	 * Adds an activist to the database.
+	 * 
+	 * This also notifies all those subscribed that a new activist
+	 * has been added to the database.
 	 */
 	@POST
 	@Consumes("application/xml")
-	public Response signUp(ActivistDTO a) {
+	public synchronized Response signUp(ActivistDTO a) {
 		EntityManager em = EMF.createEntityManager();
 		Activist activist = ActivistMapper.toDomainModel(a);
 		em.getTransaction().begin();
 		em.persist(activist);
 		em.getTransaction().commit();
 		em.close();
+		
+		for (AsyncResponse response : responses) {
+			response.resume("An Activist with the username: " + a.get_username() + " has been created within the database.");
+		}
+		responses.clear();
+		
 		return Response.created(URI.create("/activists/" + activist.getId())).build();
 	}
 
@@ -116,7 +130,28 @@ public class ActivistResource {
 	}
 	
 	/**
-	 * Returns all the events an activist is attending
+	 * This is a simple and poor implementation of an async response.
+	 * That utilises a long poll GET.
+	 * 
+	 * This has been used for the sake of KISS as it is unlikely many
+	 * activists will ever sign up simultaneously so the case of missing
+	 * an activist is unlikely.
+	 * 
+	 * This produces a plaintext response.
+	 */
+	@GET
+	@Path("/subscribe")
+	@Produces("text/plain")
+	public synchronized void subscribeActivists(@Suspended AsyncResponse response) {
+		_logger.info("A user has subscribed to Activists.");
+		responses.add(response);
+	}
+	
+	/**
+	 * Returns all the events an activist is attending. This is provided
+	 * as an example of how this request would work. It is not actually
+	 * usable in a test case as the Event and Campaign resources are not
+	 * implemented.
 	 */
 	@GET
 	@Path("/{id}/events")

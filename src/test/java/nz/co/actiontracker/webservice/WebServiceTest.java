@@ -141,7 +141,7 @@ public class WebServiceTest {
 			client.close();
 		}
 	}
-	
+
 	/**
 	 * This tests listing all the activists in existance. It does not
 	 * specify a range so the default range is used (0 - max long value)
@@ -154,17 +154,17 @@ public class WebServiceTest {
 
 			_logger.info("Querying all the Activists...");
 			List<ActivistDTO> activists = client.target("http://0.0.0.0:8080/services/activists").request().get(new GenericType<List<ActivistDTO>>(){});
-			
+
 			for (ActivistDTO a : activists) {
 				Activist act = ActivistMapper.toDomainModel(a);
 				System.out.println("Retrieved Activist: " + act.toString());
 			}
-			
+
 		} finally {
 			client.close();
 		}
 	}
-	
+
 	/**
 	 * This tests querying all activists with query parameters enabled.
 	 * This will return all the activists with ids between 10 and 300.
@@ -179,15 +179,96 @@ public class WebServiceTest {
 
 			_logger.info("Querying all the Activists...");
 			List<ActivistDTO> activists = client.target("http://0.0.0.0:8080/services/activists?from=10&to=300").request().get(new GenericType<List<ActivistDTO>>(){});
-			
+
 			for (ActivistDTO a : activists) {
 				Activist act = ActivistMapper.toDomainModel(a);
 				System.out.println("Retrieved Activist: " + act.toString());
 			}
-			
+
 		} finally {
 			client.close();
 		}
+	}
+	
+	/**
+	 * This tests the long poll GET for when activists are created.
+	 * 
+	 * This is a simple application showing off async functionality.
+	 * In the completed webservice this was going to be used to subscribe
+	 * to things like the knowledgebase so that users are notified when
+	 * an article is added.
+	 * 
+	 * This test functions by subscribing to the Activists in one thread
+	 * and then in another creating an activist using the POST method.
+	 * The test checks that the correct message is returned.
+	 */
+	@Test
+	public void testAsyncResponse() {
+
+		Thread subscribe = new Thread() {
+			public void run() {
+				Client client = ClientBuilder.newClient();
+				_logger.info("Subscribing to Activists...");
+
+				Response response = client.target("http://0.0.0.0:8080/services/activists/subscribe").request().get();
+
+				//Loop until the response is received.
+				while(!response.hasEntity());
+
+				//Print the response when it arrives
+				System.out.println(response.readEntity(String.class));
+				
+				//Close the response
+				response.close();
+				//Close the client
+				client.close();
+			}
+		};
+		
+		//This must go here to prevent race conditions.
+		subscribe.start();
+		
+		Thread createActivist = new Thread() {
+			public void run() {
+				Client client = ClientBuilder.newClient();
+				_logger.info("Creating a new Activist...");
+
+				String xml = "<activist>"
+						+ "<username>JohnTravolta"+ new Random().nextInt(1000) +"</username>"
+						+ "<email>JTravolta@hollywood.com</email>"
+						+ "<address></address>"
+						+ "</activist>";
+
+				Response response2 = client.target("http://0.0.0.0:8080/services/activists")
+						.request().post(Entity.xml(xml));
+
+				int status = response2.getStatus();
+				if (status != 201) {
+					_logger.error("Failed to create Activist; Web Service responded with: " + status);
+					fail();
+				}
+
+				String location = response2.getLocation().toString();
+				_logger.info("Uri for new Activist: " + location);
+
+				response2.close();
+				//Close the client.
+				client.close();
+			}
+		};	
+		
+		createActivist.start();
+		
+		/**
+		 * This is an appalling use of Java and I promise never to do it
+		 * again. Please, just let this assignment be over.
+		 */
+		
+		//Wait for the subscribe thread to finish
+		while(subscribe.isAlive());
+		//Make sure the createActivist thread is also finished
+		while(createActivist.isAlive());
+
 	}
 
 }

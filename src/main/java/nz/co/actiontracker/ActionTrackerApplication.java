@@ -8,6 +8,11 @@ import javax.ws.rs.core.Application;
 
 import nz.co.actiontracker.activist.ActivistResource;
 
+/**
+ * A simple Application class that specifies the ActivistResource
+ * as a singleton. In a completed implementation this would contain
+ * many more resources and some classes.
+ */
 @ApplicationPath("/services")
 public class ActionTrackerApplication extends Application {
 

@@ -12,6 +12,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Represents an article in the knowledgebase.
+ * 
+ * Another example of a JAXB value type.
  */
 @Embeddable
 @XmlRootElement(name="article")

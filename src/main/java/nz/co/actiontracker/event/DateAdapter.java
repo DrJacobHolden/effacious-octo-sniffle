@@ -5,6 +5,11 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+/**
+ * A simple adapter class that allows JaxB to process
+ * a SimpleDateFormat object into the appropriate XML
+ * or Json representation.
+ */
 public class DateAdapter extends XmlAdapter<String, Date> {
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

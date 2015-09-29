@@ -1,5 +1,9 @@
 package nz.co.actiontracker.activist;
 
+/**
+ * This class is based on the example from Ian Warren. It
+ * simply maps an activist to its DTO model and vice-versa.
+ */
 public class ActivistMapper {
 
 	public static Activist toDomainModel(ActivistDTO dtoActivist) {

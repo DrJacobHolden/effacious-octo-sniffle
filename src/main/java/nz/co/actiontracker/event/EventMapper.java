@@ -6,6 +6,10 @@ import java.util.Set;
 import nz.co.actiontracker.activist.Activist;
 import nz.co.actiontracker.campaign.Campaign;
 
+/**
+ * This class simply provides methods for converting between
+ * Event and EventDTO objects.
+ */
 public class EventMapper {
 	
 	public static Event toDomainModel(EventDTO dtoEvent, Activist creator, Campaign campaign) {

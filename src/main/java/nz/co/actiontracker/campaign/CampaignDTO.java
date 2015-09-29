@@ -8,6 +8,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import nz.co.actiontracker.activist.ActivistDTO;
 
+/**
+ * This is the DTO class for a Campaign object.
+ * 
+ * This class provides the base level details of a campaign that
+ * would be provided in a GET response or a POST request. The other
+ * elements included in the campaign class would be modified by other
+ * API calls and so do not need to be included. This has the additional
+ * benefit of massively simplifying the code.
+ */
 @XmlRootElement(name="campaign")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CampaignDTO {

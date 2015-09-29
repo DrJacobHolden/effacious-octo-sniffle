@@ -42,7 +42,7 @@ public abstract class JpaTest {
 		_jdbcConnection = DriverManager.getConnection(
 				"jdbc:h2:~/test;mv_store=false","sa", "sa");
 		clearDatabase(true);
-		_factory = EMFactorySingleton.getInstance();//Persistence.createEntityManagerFactory("scratchPU");
+		_factory = EMFactorySingleton.getInstance();
 	}
 	
 	@AfterClass

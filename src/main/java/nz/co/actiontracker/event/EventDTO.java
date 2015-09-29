@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+/**
+ * This is the DTO object for an Event object.
+ */
 @XmlRootElement(name="event")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EventDTO {

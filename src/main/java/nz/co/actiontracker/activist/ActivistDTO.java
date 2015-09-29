@@ -6,6 +6,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * A DTO class representing a simplified Activist.
+ * 
+ * This class removes all the collection relationships as
+ * these are retrieved using separate API requests. This just
+ * contains the details about an Activist.
+ */
 @XmlRootElement(name="activist")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActivistDTO {

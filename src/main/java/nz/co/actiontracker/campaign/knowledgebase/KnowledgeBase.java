@@ -29,9 +29,6 @@ import org.slf4j.LoggerFactory;
  * In this implementation this is very basic and would not be
  * suitable for an actual application. This is mainly to demonstrate
  * various levels of hierarchies within the database.
- * 
- * @author trob525
- *
  */
 @Entity
 @XmlRootElement(name="knowledgebase")

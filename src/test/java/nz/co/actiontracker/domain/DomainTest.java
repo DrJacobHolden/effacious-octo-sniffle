@@ -19,6 +19,15 @@ import nz.co.actiontracker.event.Event;
 /**
  * This tests adding and removing items from the database
  * without using the webservice.
+ * 
+ * WARNING: These tests are commented out as they conflict with the
+ * running requirements of the tests in WebServiceTest. In order to
+ * get these tests to run, uncomment the tests, comment the tests in WebServiceTest
+ * and remove the last plugins from the POM file (they are commented
+ * so it is obvious which ones). This will prevent the webservice starting
+ * before the tests are run and allow these tests cases to have full
+ * power over the database. If you do not follow these instructions
+ * the build will fail and the database will get very grumpy with you.
  */
 public class DomainTest extends JpaTest {
 
